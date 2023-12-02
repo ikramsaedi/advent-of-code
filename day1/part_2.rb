@@ -1,10 +1,15 @@
-# this currently does not give me the right answer
-
 input = File.open("input.txt")
 lines = input.readlines().map(&:chomp)
 
 # This gets all the digits within a string
-digits_arr = lines.map {|line| line.scan(/one|two|three|four|five|six|seven|eight|nine|\d/)}
+# The positive lookahead works for cases like "oneight", where you are still expected to 
+# pluck "one" and "eight" as separate strings (rather than just "one").
+# I think what is doing is no matter your position in the string, it gets every instance of one, two etc
+# without actually consuming it. So in the case of oneight, both one and eight can be found because one was not consumed
+# in a capturing group
+# See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Lookahead_assertion
+
+digits_arr = lines.map {|line| line.scan(/(?=(one|two|three|four|five|six|seven|eight|nine|\d))/).flatten()}
 
 def convert_to_digit(str) 
     # If you want to use strings as keys in a hash
